@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phòng tập GymFit </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a139a67a06.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+
+        .hero {
+            position: relative;
+            background-image: url('Mau-thiet-ke-Phong-Gym-600-800-Trieu-6.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            color: white;
+        }
+
+        .nav-link:hover {
+            color: #d1d5db; /* gray-300 */
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message {
+            background-color: #98c931;
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: 1.5rem 1.5rem 0.5rem 1.5rem;
+            align-self: flex-end;
+            max-width: 80%;
+        }
+
+        .ai-message {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.75rem 1rem;
+            border-radius: 1.5rem 1.5rem 1.5rem 0.5rem;
+            align-self: flex-start;
+            max-width: 80%;
+        }
+
+        .loading-dots::after {
+            content: '...';
+            animation: dot-animation 1s infinite steps(1, end);
+        }
+        @keyframes dot-animation {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        .bg-gradient-green {
+            background-image: linear-gradient(135deg, #0F5132, #198754);
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .suggestion-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .suggestion-button {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-transform duration-300 transform">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-2xl font-bold text-gray-900">GymFit</a>
+                </div>
+                <!-- Navigation Links -->
+                <div class="hidden md:flex md:space-x-8">
+                    <a href="#trang-chu" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md font-medium">Trang Chủ</a>
+                    <a href="#gioi-thieu" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md font-medium">Giới Thiệu</a>
+                    <a href="#cac-lop-tap" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md font-medium">Các Lớp Tập</a>
+                    <a href="#huong-dan-vien" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md font-medium">Huấn Luyện Viên</a>
+                    <a href="#lien-he" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md font-medium">Liên Hệ</a>
+                </div>
+
+                <!-- Chat button -->
+                <div class="flex items-center space-x-4">
+                    <button id="chatButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 flex items-center">
+                        <i class="fas fa-robot mr-2"></i> Trò chuyện
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-expanded="false">
+                        <span class="sr-only">Mở menu chính</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="md:hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#trang-chu" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Trang Chủ</a>
+                <a href="#gioi-thieu" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Giới Thiệu</a>
+                <a href="#cac-lop-tap" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Các Lớp Tập</a>
+                <a href="#huong-dan-vien" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Huấn Luyện Viên</a>
+                <a href="#lien-he" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Liên Hệ</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="mt-16">
+        <!-- Hero Section -->
+        <section id="trang-chu" class="hero">
+            <div class="hero-content">
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 animate-fadeInUp">GYMFIT HÓC MÔN</h2>
+                <p class="text-lg sm:text-xl font-medium mb-8 animate-fadeInUp animate-delay-300">Nơi Sức Khỏe Bắt Đầu và Đam Mê Bùng Cháy</p>
+                <a href="#cac-lop-tap" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 animate-fadeInUp animate-delay-600">Khám Phá Ngay</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="gioi-thieu" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-4">Về Chúng Tôi</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">GymFit Hóc Môn là điểm đến lý tưởng cho những ai muốn cải thiện vóc dáng và sức khỏe. Với không gian rộng rãi, trang thiết bị hiện đại và đội ngũ huấn luyện viên chuyên nghiệp, chúng tôi cam kết mang đến trải nghiệm tập luyện tốt nhất cho bạn.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <i class="fas fa-dumbbell text-5xl text-indigo-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Thiết Bị Hiện Đại</h3>
+                        <p class="text-gray-500">Trang bị máy móc từ các thương hiệu hàng đầu thế giới, đáp ứng mọi nhu cầu tập luyện.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <i class="fas fa-users text-5xl text-indigo-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Đội Ngũ Chuyên Nghiệp</h3>
+                        <p class="text-gray-500">Đội ngũ PT tận tâm, có chứng chỉ quốc tế, luôn sẵn sàng hỗ trợ bạn.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <i class="fas fa-spa text-5xl text-indigo-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Không Gian Thoải Mái</h3>
+                        <p class="text-gray-500">Môi trường tập luyện sạch sẽ, thoáng mát, tạo cảm hứng tối đa.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Classes Section -->
+        <section id="cac-lop-tap" class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Các Lớp Tập Phổ Biến</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Class 1 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <img src="yoga.webp" alt="Yoga Class" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Yoga</h3>
+                            <p class="text-gray-600 mb-4">Cải thiện sự dẻo dai, thư giãn tinh thần và tăng cường sức mạnh cơ bắp.</p>
+                            <a href="#" class="inline-block bg-indigo-500 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 hover:bg-indigo-600">Đăng ký</a>
+                        </div>
+                    </div>
+                    <!-- Class 2 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <img src="zumba.png" alt="Zumba Class" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Zumba</h3>
+                            <p class="text-gray-600 mb-4">Đốt cháy calo với những bước nhảy sôi động và âm nhạc cuồng nhiệt.</p>
+                            <a href="#" class="inline-block bg-indigo-500 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 hover:bg-indigo-600">Đăng ký</a>
+                        </div>
+                    </div>
+                    <!-- Class 3 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <img src="kickfit.webp" alt="Kickfit Class" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Kickfit</h3>
+                            <p class="text-gray-600 mb-4">Tăng cường sức mạnh, sự nhanh nhẹn và khả năng tự vệ.</p>
+                            <a href="#" class="inline-block bg-indigo-500 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 hover:bg-indigo-600">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trainers Section -->
+        <section id="huong-dan-vien" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Đội Ngũ Huấn Luyện Viên</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <!-- Trainer 1 -->
+                    <div class="bg-gray-50 rounded-lg shadow-md text-center p-6 transition-all duration-300 hover:scale-105">
+                        <img src="nam1.png" alt="Huấn luyện viên 1" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="text-xl font-semibold mb-1">Nguyễn Văn A</h3>
+                        <p class="text-indigo-600 mb-2">Chuyên gia Tăng Cơ</p>
+                        <p class="text-gray-500 text-sm">Với 10 năm kinh nghiệm trong lĩnh vực huấn luyện thể hình, anh A sẽ giúp bạn đạt được vóc dáng mơ ước.</p>
+                    </div>
+                    <!-- Trainer 2 -->
+                    <div class="bg-gray-50 rounded-lg shadow-md text-center p-6 transition-all duration-300 hover:scale-105">
+                        <img src="nữ1.png" alt="Huấn luyện viên 2" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="text-xl font-semibold mb-1">Lê Thị B</h3>
+                        <p class="text-indigo-600 mb-2">Chuyên gia Giảm Mỡ</p>
+                        <p class="text-gray-500 text-sm">Chị B nổi tiếng với các bài tập đốt cháy calo hiệu quả và các kế hoạch dinh dưỡng khoa học.</p>
+                    </div>
+                    <!-- Trainer 3 -->
+                    <div class="bg-gray-50 rounded-lg shadow-md text-center p-6 transition-all duration-300 hover:scale-105">
+                        <img src="nam2.png" alt="Huấn luyện viên 3" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="text-xl font-semibold mb-1">Trần Văn C</h3>
+                        <p class="text-indigo-600 mb-2">Chuyên gia Yoga & Phục Hồi</p>
+                        <p class="text-gray-500 text-sm">Anh C sẽ hướng dẫn bạn những bài tập giúp thư giãn cơ thể, cải thiện sự linh hoạt và phục hồi sau chấn thương.</p>
+                    </div>
+                    <!-- Trainer 4 -->
+                    <div class="bg-gray-50 rounded-lg shadow-md text-center p-6 transition-all duration-300 hover:scale-105">
+                        <img src="nữ2.png" alt="Huấn luyện viên 4" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="text-xl font-semibold mb-1">Phạm Thị D</h3>
+                        <p class="text-indigo-600 mb-2">Chuyên gia Kickfit</p>
+                        <p class="text-gray-500 text-sm">Chị D mang đến những buổi tập Kickfit tràn đầy năng lượng, giúp bạn giải tỏa căng thẳng và rèn luyện sức bền.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="lien-he" class="py-16 bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-4">Liên Hệ</h2>
+                <p class="text-gray-600 mb-8">Bạn có câu hỏi? Hãy để lại thông tin của bạn, chúng tôi sẽ liên hệ lại sớm nhất.</p>
+                <form id="contactForm" class="space-y-4">
+                    <div>
+                        <input type="text" id="contactName" placeholder="Họ và tên" class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" required>
+                    </div>
+                    <div>
+                        <input type="email" id="contactEmail" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" required>
+                    </div>
+                    <div>
+                        <textarea id="contactMessage" placeholder="Nội dung tin nhắn" rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" required></textarea>
+                    </div>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition-colors duration-300 shadow-lg transform hover:scale-105">Gửi tin nhắn</button>
+                </form>
+                <div id="contactMessageStatus" class="mt-4 text-center text-sm font-semibold"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-4">
+                <a href="#" class="text-2xl font-bold text-white">GymFit</a>
+            </div>
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="https://www.facebook.com" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p>&copy; 2024 GymFit Hóc Môn. Mọi quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Chat Modal -->
+    <div id="chatModal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div class="modal-content w-full max-w-md bg-white rounded-lg shadow-xl relative flex flex-col h-[70vh]">
+            <!-- Header -->
+            <div class="bg-indigo-600 text-white p-4 rounded-t-lg flex justify-between items-center">
+                <h3 class="text-lg font-bold">Trò chuyện với Huấn luyện viên AI Của Bạn</h3>
+                <button id="closeChatBtn" class="text-white hover:text-gray-200">&times;</button>
+            </div>
+            <!-- Chat Box -->
+            <div id="chatBox" class="chat-box flex-grow"></div>
+            <!-- Suggestions -->
+            <div class="suggestion-buttons">
+                <button id="workoutPlanBtn" class="suggestion-button">Lịch tập</button>
+                <button id="calorieBtn" class="suggestion-button">Tính calo</button>
+                <button id="mealBtn" class="suggestion-button">Thực đơn</button>
+                <button id="recoveryBtn" class="suggestion-button">Phục hồi</button>
+                <button id="quoteBtn" class="suggestion-button">Tạo động lực</button>
+                <button id="analyzeGoalBtn" class="suggestion-button">Phân tích mục tiêu</button>
+            </div>
+            <!-- Chat Input -->
+            <div class="p-4 flex items-center space-x-2">
+                <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." class="flex-1 p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                <button id="sendChatBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white p-2 rounded-md">Gửi</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const nav = document.querySelector('nav');
+            const contactForm = document.getElementById('contactForm');
+            const contactMessageStatus = document.getElementById('contactMessageStatus');
+            const chatButton = document.getElementById('chatButton');
+            const chatModal = document.getElementById('chatModal');
+            const closeChatBtn = document.getElementById('closeChatBtn');
+            const chatBox = document.getElementById('chatBox');
+            const chatInput = document.getElementById('chatInput');
+            const sendChatBtn = document.getElementById('sendChatBtn');
+
+            // Get new button elements
+            const workoutPlanBtn = document.getElementById('workoutPlanBtn');
+            const calorieBtn = document.getElementById('calorieBtn');
+            const mealBtn = document.getElementById('mealBtn');
+            const recoveryBtn = document.getElementById('recoveryBtn');
+            const quoteBtn = document.getElementById('quoteBtn');
+            const analyzeGoalBtn = document.getElementById('analyzeGoalBtn');
+
+            let lastScrollY = window.scrollY;
+
+            // --- UI/UX Functions ---
+            
+            // Toggle mobile menu
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Hide/show navbar on scroll
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                    nav.classList.add('-translate-y-full');
+                } else {
+                    nav.classList.remove('-translate-y-full');
+                }
+                lastScrollY = window.scrollY;
+            });
+            
+            // Form submission
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                contactMessageStatus.textContent = 'Đang gửi...';
+                contactMessageStatus.className = 'mt-4 text-center text-sm font-semibold text-gray-500';
+
+                setTimeout(() => {
+                    contactForm.reset();
+                    contactMessageStatus.textContent = 'Tin nhắn của bạn đã được gửi thành công!';
+                    contactMessageStatus.className = 'mt-4 text-center text-sm font-semibold text-green-500';
+                }, 1000);
+            });
+
+            // Open chat modal
+            chatButton.addEventListener('click', () => {
+                chatModal.classList.remove('hidden');
+                setTimeout(() => {
+                    chatModal.classList.add('show');
+                }, 10);
+                if (chatHistory.length === 0) {
+                    addMessage('ai', "Chào bạn! Tôi có thể giúp gì cho bạn hôm nay?");
+                }
+            });
+
+            // Close chat modal
+            closeChatBtn.addEventListener('click', () => {
+                chatModal.classList.remove('show');
+                setTimeout(() => {
+                    chatModal.classList.add('hidden');
+                }, 300);
+            });
+            
+            // Gemini API Chat Logic
+            const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
+            const apiKey = "";
+            let chatHistory = [];
+            let awaitingInputFor = null;
+
+            // Function to add a message to the chat box
+            const addMessage = (role, text) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add(role === 'user' ? 'user-message' : 'ai-message');
+                messageDiv.textContent = text;
+                chatBox.appendChild(messageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+
+            // Function to handle sending a message
+            const handleSend = async (userMessage) => {
+                if (!userMessage) return;
+
+                // Add user message to chat history immediately
+                addMessage('user', userMessage);
+
+                // Add a temporary loading message for AI response
+                const loadingMessage = document.createElement('div');
+                loadingMessage.classList.add('ai-message', 'loading-dots');
+                loadingMessage.innerHTML = '<span>...</span>';
+                chatBox.appendChild(loadingMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                let promptToSend = userMessage;
+                let systemPrompt = "Bạn là một huấn luyện viên AI thân thiện và hiểu biết. Hãy trả lời các câu hỏi về thể hình, dinh dưỡng, và động lực. Cố gắng trả lời ngắn gọn và hữu ích. Hãy trả lời bằng tiếng Việt.";
+                let useGrounding = false;
+
+                if (awaitingInputFor === 'workoutPlan') {
+                    promptToSend = `Tạo một lịch tập luyện chi tiết cho người mới bắt đầu với mục tiêu là "${userMessage}". Lịch tập nên kéo dài 4 buổi/tuần, mỗi buổi tập trung vào một nhóm cơ chính. Liệt kê các bài tập, số hiệp và số lần lặp lại cho mỗi buổi.`;
+                    awaitingInputFor = null;
+                } else if (awaitingInputFor === 'calorieMacro') {
+                    const userData = userMessage.split(',').map(s => s.trim());
+                    if (userData.length === 5) {
+                        const [gender, age, weight, height, activityLevel] = userData;
+                        promptToSend = `Dựa trên thông tin sau, hãy tính toán lượng calo và macro cần thiết hàng ngày để duy trì cân nặng:\n- Giới tính: ${gender}\n- Tuổi: ${age}\n- Cân nặng: ${weight} kg\n- Chiều cao: ${height} cm\n- Mức độ hoạt động: ${activityLevel}. Dựa trên các yếu tố đó, hãy giải thích công thức tính toán bạn sử dụng và đưa ra kết quả.`;
+                    } else {
+                        // Remove loading message if the input is invalid
+                        chatBox.removeChild(loadingMessage);
+                        addMessage('ai', "Định dạng không đúng. Vui lòng nhập lại theo thứ tự: giới tính, tuổi, cân nặng (kg), chiều cao (cm), mức độ hoạt động.");
+                        return;
+                    }
+                    awaitingInputFor = null;
+                } else if (awaitingInputFor === 'analyzeGoal') {
+                    promptToSend = `Phân tích mục tiêu tập luyện sau: "${userMessage}". Đưa ra lời khuyên về tính khả thi, thời gian ước tính để đạt được, và chia nhỏ mục tiêu thành các bước hành động cụ thể, khoa học.`;
+                    awaitingInputFor = null;
+                } else {
+                    // Default behavior
+                    chatHistory.push({ role: "user", parts: [{ text: promptToSend }] });
+                }
+
+                const payload = {
+                    contents: chatHistory,
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                // Use Google Search grounding only for meal plans
+                if (userMessage.includes("thực đơn")) {
+                    payload.tools = [{ "google_search": {} }];
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    // Remove loading message
+                    chatBox.removeChild(loadingMessage);
+
+                    if (generatedText) {
+                        addMessage('ai', generatedText);
+                        // Add AI response to chat history for context
+                        chatHistory.push({ role: "model", parts: [{ text: generatedText }] });
+                    } else {
+                        addMessage('ai', "Xin lỗi, tôi không thể trả lời lúc này. Vui lòng thử lại sau.");
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi gửi tin nhắn:", error);
+                    chatBox.removeChild(loadingMessage);
+                    // Check for 401 Unauthorized error specifically
+                    if (error.message.includes("401")) {
+                        addMessage('ai', "Xin lỗi, đã xảy ra lỗi xác thực API. Vui lòng thử lại.");
+                    } else {
+                        addMessage('ai', "Đã xảy ra lỗi. Vui lòng kiểm tra kết nối mạng.");
+                    }
+                }
+            };
+            
+            // Event listeners for AI buttons
+            mealBtn.addEventListener('click', () => {
+                const message = "Lên một thực đơn dinh dưỡng 7 ngày, khoảng 2000 calo mỗi ngày, tập trung vào protein và rau củ, phù hợp cho người tập gym muốn tăng cơ. Thực đơn cần đa dạng và dễ tìm nguyên liệu ở Việt Nam.";
+                handleSend(message);
+            });
+
+            quoteBtn.addEventListener('click', () => {
+                const message = "Hãy tạo một câu nói truyền cảm hứng về việc tập luyện, ngắn gọn và mạnh mẽ. Chỉ trả lời bằng câu nói, không thêm bất cứ nội dung nào khác.";
+                handleSend(message);
+            });
+
+            recoveryBtn.addEventListener('click', () => {
+                const message = "Hãy đưa ra lời khuyên chi tiết về cách phục hồi sau một buổi tập gym. Nội dung bao gồm các bài tập giãn cơ, gợi ý dinh dưỡng, và tầm quan trọng của việc nghỉ ngơi. Cố gắng trình bày ngắn gọn, dễ hiểu và liệt kê các gạch đầu dòng.";
+                handleSend(message);
+            });
+
+            workoutPlanBtn.addEventListener('click', () => {
+                addMessage('ai', "Bạn muốn tập trung vào mục tiêu nào? (ví dụ: tăng cơ, giảm mỡ, tăng sức bền) và bạn có thể tập bao nhiêu buổi một tuần? Hãy nhập câu trả lời của bạn vào ô chat bên dưới. Ví dụ: 'Tăng cơ, 4 buổi/tuần'.");
+                awaitingInputFor = 'workoutPlan';
+            });
+
+            calorieBtn.addEventListener('click', () => {
+                addMessage('ai', "Để tính calo, vui lòng cung cấp thông tin của bạn theo định dạng sau: giới tính, tuổi, cân nặng (kg), chiều cao (cm), mức độ hoạt động. (Mức độ hoạt động: ít vận động, vận động nhẹ, vận động vừa, vận động nhiều, vận động rất nhiều). Ví dụ: 'Nam, 30, 75, 175, vận động vừa'");
+                awaitingInputFor = 'calorieMacro';
+            });
+
+            // New event listener for goal analysis
+            analyzeGoalBtn.addEventListener('click', () => {
+                addMessage('ai', "Bạn muốn phân tích mục tiêu tập luyện nào? Hãy nhập mục tiêu của bạn vào ô chat bên dưới để tôi có thể giúp bạn.");
+                awaitingInputFor = 'analyzeGoal';
+            });
+
+            // Event listeners for chat input
+            sendChatBtn.addEventListener('click', () => {
+                const message = chatInput.value.trim();
+                if (message) {
+                    chatInput.value = '';
+                    handleSend(message);
+                }
+            });
+
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
